@@ -136,7 +136,8 @@ std::string Utils::rtrim(std::string s)
     return s.substr(0, goodEnd);
 }
 
-void Utils::split(const std::string& str, std::vector<std::string>& tokens, const std::string& delimiters)
+void Utils::split(const std::string& str, std::vector<std::string>& tokens,
+    const std::string& delimiters)
 {
     // Skip delimiters at beginning.
     std::string::size_type lastPos = str.find_first_not_of(delimiters, 0);

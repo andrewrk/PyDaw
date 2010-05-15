@@ -14,9 +14,23 @@ public:
     ~Flp();
 
     // true if loaded ok
-    bool good() { return m_good; }
+    bool good() const { return m_good; }
     // if not good, this tells why
-    std::string errorMessage() { return m_errMsg; }
+    std::string errorMessage() const { return m_errMsg; }
+
+    // whether or not to print unrecognized events to stderr
+    void setDebug(bool value) { m_debug = value;}
+    bool debug() const {return m_debug;}
+
+    // data about this project
+    int tempo() const { return m_project.tempo; }
+    std::string title() const { return m_project.projectTitle; }
+    std::string versionString() const { return m_project.versionString; }
+
+    // dependencies
+    std::vector<std::string> * channels() { return &m_channelStrings; }
+    std::vector<std::string> * effects() { return &m_effectStrings; }
+    std::vector<std::string> * samples() { return &m_sampleStrings; }
 
 private:
     static const int c_NumFLFxChannels;
@@ -475,8 +489,14 @@ private:
     std::string m_errMsg;
     // file handle
     std::fstream m_file;
+
+    bool m_debug;
     
     FL_Project m_project;
+
+    std::vector<std::string> m_channelStrings;
+    std::vector<std::string> m_effectStrings;
+    std::vector<std::string> m_sampleStrings;
 
     // read an 8bit signed integer and move the read position
     int readByte();
