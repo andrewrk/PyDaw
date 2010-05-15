@@ -310,6 +310,7 @@ Flp::Flp(std::string filename) :
 
         case FLP_LayerChans:
             m_project.channels[data].layerParent = cur_channel;
+            cc->generatorName = "layer";
 
             // DWORD EVENTS
         case FLP_Color:
