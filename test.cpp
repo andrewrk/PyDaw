@@ -17,22 +17,20 @@ int main(int argc, char * argv[])
         std::cout << "Project title: " << flp.title() << std::endl;
         std::cout << "Project version: " << flp.versionString() << std::endl;
 
-        std::vector<std::string> * channels = flp.channels();
         std::cout << "Channels:\n-------\n";
-        for (int i=0; i<channels->size(); ++i) {
-            std::cout << channels->at(i) << std::endl;
+        for (int i=0; i<flp.channelCount(); ++i) {
+            std::cout << flp.channelName(i) << " (" <<
+                flp.channelPluginName(i) << ")" << std::endl;
         }
 
-        std::vector<std::string> * samples = flp.samples();
         std::cout << "\nSamples:\n--------\n";
-        for (int i=0; i<samples->size(); ++i) {
-            std::cout << samples->at(i) << std::endl;
+        for (int i=0; i<flp.sampleCount(); ++i) {
+            std::cout << flp.sampleFileName(i) << std::endl;
         }
 
-        std::vector<std::string> * effects = flp.effects();
         std::cout << "\nEffects:\n--------\n";
-        for (int i=0; i<effects->size(); ++i) {
-            std::cout << effects->at(i) << std::endl;
+        for (int i=0; i<flp.effectCount(); ++i) {
+            std::cout << flp.effectPluginName(i) << std::endl;
         }
 
     } else {

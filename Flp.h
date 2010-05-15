@@ -6,6 +6,7 @@
 #include <vector>
 #include <utility>
 #include <map>
+#include <set>
 
 class Flp
 {
@@ -28,9 +29,16 @@ public:
     std::string versionString() const { return m_project.versionString; }
 
     // dependencies
-    std::vector<std::string> * channels() { return &m_channelStrings; }
-    std::vector<std::string> * effects() { return &m_effectStrings; }
-    std::vector<std::string> * samples() { return &m_sampleStrings; }
+    // channels
+    int channelCount() const { return m_project.channels.size(); }
+    std::string channelName(int i) const { return m_project.channels[i].name; }
+    std::string channelPluginName(int i) const { return m_project.channels[i].generatorName; }
+    // effects
+    int effectCount() const { return m_effectStrings.size(); }
+    std::string effectPluginName(int i) const { return m_effectStrings[i]; }
+    // samples
+    int sampleCount() const { return m_sampleStrings.size(); }
+    std::string sampleFileName(int i) const { return m_sampleStrings[i]; }
 
 private:
     static const int c_NumFLFxChannels;
@@ -60,7 +68,8 @@ private:
             delete[] pluginSettings;
         }
 
-        std::string name;
+        std::string name; // the nickname given by the user
+        std::string generatorName; // the actual name of the plugin.
         char * pluginSettings;
         int pluginSettingsLength;
     };
@@ -494,9 +503,12 @@ private:
     
     FL_Project m_project;
 
-    std::vector<std::string> m_channelStrings;
     std::vector<std::string> m_effectStrings;
     std::vector<std::string> m_sampleStrings;
+
+    std::set<std::string> m_sampleSet;
+    std::set<std::string> m_effectPlugins;
+    std::set<std::string> m_channelPlugins;
 
     // read an 8bit signed integer and move the read position
     int readByte();
@@ -508,6 +520,8 @@ private:
     void skip(int bytes);
     // create an integer out of 4 characters
     int makeId(char,char,char,char);
+
+    static void dump_mem (const void * buffer, int n_bytes);
 };
 
 #endif

@@ -126,7 +126,7 @@ Flp::Flp(std::string filename) :
             assert(m_file.good());
             text[text_len] = 0; // null byte of string
         }
-        // TODO: document. wtf is a puc and a pi?
+        // TODO: name these variables better
         // puc = pointer to an unsigned char
         const unsigned char * puc = (const unsigned char*) text;
         // pi = pointer to an int
@@ -196,21 +196,17 @@ Flp::Flp(std::string filename) :
             break;
 
         case FLP_ChanType:
-            // TODO: do something useful with this
             if (m_debug)
                 std::cerr << "channel type: " << data << std::endl;
-            /*
             if (cc) {
                 switch (data) {
-                    case 0: cc->pluginType = FL_Plugin::Sampler; break;
-                    case 1: cc->pluginType = FL_Plugin::TS404; break;
-                    // case 2: cc->pluginType = FL_Plugin::Fruity_3x_Osc; break;
-                    case 3: cc->pluginType = FL_Plugin::Layer; break;
-                    default:
-                            break;
+                    case 0: cc->generatorName = "sampler"; break;
+                    case 1: cc->generatorName = "ts 404"; break;
+                    case 2: cc->generatorName = "3x osc"; break;
+                    case 3: cc->generatorName = "layer"; break;
+                    default: break;
                 }
             }
-            */
             break;
 
         case FLP_MixSliceNum:
@@ -403,6 +399,8 @@ Flp::Flp(std::string filename) :
 
         case FLP_Text_SampleFileName:
             cc->sampleFileName = text;
+            cc->generatorName = "sampler";
+            m_sampleSet.insert(cc->sampleFileName);
             break;
 
         case FLP_Text_Version:
@@ -424,8 +422,12 @@ Flp::Flp(std::string filename) :
         case FLP_Text_PluginName:
             {
                 std::string pluginName = Utils::toLower(text);
+                // we add all plugins to effects list and then
+                // remove the ones that aren't effects later.
+                m_effectPlugins.insert(pluginName);
+                cc->generatorName = pluginName;
                 if (m_debug)
-                    std::cerr << "TODO: plugin: " << pluginName << std::endl;
+                    std::cerr << "plugin: " << pluginName << std::endl;
                 break;
             }
 
@@ -450,14 +452,16 @@ Flp::Flp(std::string filename) :
                 cc->pluginSettings = new char[text_len];
                 std::memcpy( cc->pluginSettings, text, text_len );
                 cc->pluginSettingsLength = text_len;
-                // TODO: assume this is a ts404 plugin
+                cc->generatorName = "ts 404";
             }
             break;
 
         case FLP_Text_NewPlugin:
             // TODO: if it's an effect plugin make a new effect
-            if (m_debug)
-                std::cerr << "TODO: new plugin: " << text << std::endl;
+            if (m_debug) {
+                std::cerr << "new plugin: " << std::endl;
+                dump_mem(text, text_len);
+            }
             break;
 
         case FLP_Text_PluginParams:
@@ -546,9 +550,7 @@ Flp::Flp(std::string filename) :
                     a.value = pi[3*i+2];
                     a.channel = pi[3*i+1] >> 16;
                     a.control = pi[3*i+1] & 0xffff;
-                    if (a.channel >= 0 && a.channel <
-                        m_project.numChannels)
-                    {
+                    if (a.channel >= 0 && a.channel < m_project.numChannels) {
                         m_project.channels[a.channel].automationData
                             .push_back(a);
                     }
@@ -657,21 +659,22 @@ Flp::Flp(std::string filename) :
         }
     }
 
-    // break down into dependencies
-    m_channelStrings.clear();
+    // create list of sample dependencies
     m_sampleStrings.clear();
-    for (int i=0; i<m_project.channels.size(); ++i) {
-        FL_Channel * ch = &m_project.channels[i];
-        if (! ch->sampleFileName.empty())
-            m_sampleStrings.push_back(ch->sampleFileName);
-        else
-            m_channelStrings.push_back(m_project.channels[i].name);
-    }
+    std::set<std::string>::iterator it;
+    for (it=m_sampleSet.begin(); it != m_sampleSet.end(); ++it)
+        m_sampleStrings.push_back(*it);
 
+    // effects are the ones that aren't channels.
+    m_channelPlugins.clear();
     m_effectStrings.clear();
-    for (int i=0; i<m_project.effects.size(); ++i) {
-        m_effectStrings.push_back(m_project.effects[i].name);
+    for (int i=0; i<m_project.channels.size(); ++i)
+        m_channelPlugins.insert(m_project.channels[i].generatorName);
+    for (it=m_effectPlugins.begin(); it != m_effectPlugins.end(); ++it) {
+        if (m_channelPlugins.count(*it) == 0)
+            m_effectStrings.push_back(*it);
     }
+    
 
     m_good = true;
 }
@@ -712,5 +715,15 @@ int Flp::makeId(char c1, char c2, char c3, char c4)
 void Flp::skip(int bytes)
 {
     m_file.seekg(bytes, std::ios::cur);
+}
+
+void Flp::dump_mem (const void * buffer, int n_bytes)
+{
+    unsigned char * cp = (unsigned char *) buffer;
+    for (int k = 0; k < n_bytes; ++k) {
+        //std::printf("%02x ", (unsigned int)cp[k]);
+        std::cout << cp[k];
+    }
+    std::cout << "\n\n";
 }
 
