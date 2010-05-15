@@ -31,36 +31,30 @@ Flp::Flp(std::string filename) :
     const int header_len = read32LE();
     if (header_len != 6) {
         m_errMsg = "File format is too different from what we know"
-            " (header should be 6 bytes long, but is ";
-        m_errMsg += header_len;
-        m_errMsg += ").";
+            " (header should be 6 bytes long, but is " +
+            Utils::intToString(header_len) + ").";
         return;
     }
 
     // some type thing
     const int type = read16LE();
     if (type != 0) {
-        m_errMsg = "type ";
-        m_errMsg += type;
-        m_errMsg += " is not supported.";
+        m_errMsg = "type " + Utils::intToString(type) + " is not supported.";
         return;
     }
 
     // number of channels
     m_project.numChannels = read16LE();
     if (m_project.numChannels < 1 || m_project.numChannels > 1000) {
-        m_errMsg = "invalid number of channels: ";
-        m_errMsg += m_project.numChannels;
-        m_errMsg += ".";
+        m_errMsg = "invalid number of channels: " +
+            Utils::intToString(m_project.numChannels) + ".";
         return;
     }
 
     // ppq
     const int ppq = read16LE();
     if (ppq < 0) {
-        m_errMsg = "invalid ppq: ";
-        m_errMsg += ppq;
-        m_errMsg += ".";
+        m_errMsg = "invalid ppq: " + Utils::intToString(ppq) + ".";
         return;
     }
 
@@ -75,9 +69,7 @@ Flp::Flp(std::string filename) :
         }
         // sanity check
         if (len < 0 || len >= 0x10000000) {
-            m_errMsg = "Invalid chunk length: ";
-            m_errMsg += len;
-            m_errMsg += ".";
+            m_errMsg = "Invalid chunk length: " + Utils::intToString(len) + ".";
             return;
         }
         // check for FLdt
