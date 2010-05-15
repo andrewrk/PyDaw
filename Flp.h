@@ -242,6 +242,14 @@ private:
 
     struct note
     {
+        note(int _len, int _pos, int _key, int _vol, int _pan) :
+            key(_key),
+            volume(_vol),
+            panning(_pan),
+            length(_len),
+            position(_pos)
+        {
+        }
         int key;
         int volume;
         int panning;
@@ -250,8 +258,17 @@ private:
         int detuning;
     };
 
+    enum Targets
+    {
+        Volume,
+        Cut,
+        Resonance,
+        NumTargets
+    };
+
     struct FL_Channel_Envelope
     {
+        Targets target;
         float predelay;
         float attack;
         float hold;
@@ -471,7 +488,6 @@ private:
     void skip(int bytes);
     // create an integer out of 4 characters
     int makeId(char,char,char,char);
-
 };
 
 #endif
