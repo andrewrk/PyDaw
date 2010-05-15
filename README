@@ -1,0 +1,4 @@
+PyFlp aims to be a python library to mess with FL Studio project files.
+
+Current status: it's a c++ class that does a sloppy job reading everything.
+see TODO.

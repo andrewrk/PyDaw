@@ -1,8 +1,11 @@
- * some generators are not recognized
-   > nexus
-   > 4front piano
-   > anything in fruity wrapper
- * some effects are not recognized
-   > ambience
-   > anything in fruity wrapper
- * automation clips are not recognized as such
+= improve the Flp library
+  * some generators are not recognized
+    > nexus
+    > 4front piano
+    > anything in fruity wrapper
+  * some effects are not recognized
+    > ambience
+    > anything in fruity wrapper
+  * automation clips are not recognized as such
+= create a build setup to make Flp into a c++ library
+= create python binding 
