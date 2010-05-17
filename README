@@ -1,4 +1,54 @@
-PyFlp aims to be a python library to mess with FL Studio project files.
+== About ==
+PyFlp is a python library to mess with FL Studio project files.
 
-Current status: it's a c++ class that does a sloppy job reading everything.
-see TODO.
+Currently it is read only and only has useful functions for determining
+the dependencies of an .flp file, because that's all I need it for at 
+the moment.
+
+However the loading already knows a LOT more information about the project.
+In fact it knows pretty much everything about it and just needs some numbers
+to be cleaned up in order for the information to be useful. In other words,
+adding more functionality to this library would be pretty easy.
+
+In the future I hope to provide editing and saving support.
+
+== Installation ==
+
+python setup.py build
+sudo python setup.py install
+
+== Example usage ==
+
+    import flp
+
+    f = flp.new("files/HeretoMove_20.flp")
+
+    if f.good():
+        print("Good!")
+
+        print("Beats per minute: %i" % f.tempo())
+        print("Project title: %s" % f.title())
+        print("Project version: %s" % f.versionString())
+
+        print("\nChannels:\n---------")
+        for i in range(f.channelCount()):
+            print("%s (%s)" % (f.channelName(i), f.channelPluginName(i)))
+        
+        print("\nSamples:\n----------")
+        for i in range(f.sampleCount()):
+            print(f.sampleFileName(i))
+
+        print("\nEffects:\n----------")
+        for i in range(f.effectCount()):
+            print(f.effectPluginName(i))
+    else:
+        print("Error: %s" % f.errorMessage())
+
+== Author ==
+Written by Andrew Kelley <superjoe30@gmail.com>.
+
+Code based on LMMS <http://lmms.sourceforge.net/> FLP import filter, written
+by Tobias Doerffel.
+
+== Copyright ==
+GPL, I think.
