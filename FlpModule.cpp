@@ -2,6 +2,8 @@
 
 #include "Flp.h"
 
+#include <string>
+
 static PyObject * ErrorObject;
 
 typedef struct {
@@ -67,14 +69,6 @@ static void Flp_dealloc(FlpObject * self)
     PyObject_FREE(self);
 }
 
-static PyObject * Flp_demo(FlpObject * self, PyObject * args)
-{
-    if (! PyArg_ParseTuple(args, ""))
-        return NULL;
-    Py_INCREF(Py_None);
-    return Py_None;
-}
-
 static PyObject * Flp_good(FlpObject * self, PyObject * args)
 {
     if (! PyArg_ParseTuple(args, ""))
@@ -86,9 +80,115 @@ static PyObject * Flp_good(FlpObject * self, PyObject * args)
         Py_RETURN_FALSE;
 }
 
+static PyObject * Flp_errorMessage(FlpObject * self, PyObject * args)
+{
+    if (! PyArg_ParseTuple(args, ""))
+        return NULL;
+
+    return Py_BuildValue("s", self->flp->errorMessage().c_str());
+}
+
+static PyObject * Flp_tempo(FlpObject * self, PyObject * args)
+{
+    if (! PyArg_ParseTuple(args, ""))
+        return NULL;
+
+    return Py_BuildValue("i", self->flp->tempo());
+}
+
+static PyObject * Flp_title(FlpObject * self, PyObject * args)
+{
+    if (! PyArg_ParseTuple(args, ""))
+        return NULL;
+
+    return Py_BuildValue("s", self->flp->title().c_str());
+}
+
+static PyObject * Flp_versionString(FlpObject * self, PyObject * args)
+{
+    if (! PyArg_ParseTuple(args, ""))
+        return NULL;
+
+    return Py_BuildValue("s", self->flp->versionString().c_str());
+}
+
+static PyObject * Flp_channelCount(FlpObject * self, PyObject * args)
+{
+    if (! PyArg_ParseTuple(args, ""))
+        return NULL;
+
+    return Py_BuildValue("i", self->flp->channelCount());
+}
+
+static PyObject * Flp_channelName(FlpObject * self, PyObject * args)
+{
+    int i;
+
+    if (! PyArg_ParseTuple(args, "i", &i))
+        return NULL;
+
+    return Py_BuildValue("s", self->flp->channelName(i).c_str());
+}
+
+static PyObject * Flp_channelPluginName(FlpObject * self, PyObject * args)
+{
+    int i;
+
+    if (! PyArg_ParseTuple(args, "i", &i))
+        return NULL;
+
+    return Py_BuildValue("s", self->flp->channelPluginName(i).c_str());
+}
+
+static PyObject * Flp_effectCount(FlpObject * self, PyObject * args)
+{
+    if (! PyArg_ParseTuple(args, ""))
+        return NULL;
+
+    return Py_BuildValue("i", self->flp->effectCount());
+}
+
+static PyObject * Flp_effectPluginName(FlpObject * self, PyObject * args)
+{
+    int i;
+
+    if (! PyArg_ParseTuple(args, "i", &i))
+        return NULL;
+
+    return Py_BuildValue("s", self->flp->effectPluginName(i).c_str());
+}
+
+static PyObject * Flp_sampleCount(FlpObject * self, PyObject * args)
+{
+    if (! PyArg_ParseTuple(args, ""))
+        return NULL;
+
+    return Py_BuildValue("i", self->flp->sampleCount());
+}
+
+static PyObject * Flp_sampleFileName(FlpObject * self, PyObject * args)
+{
+    int i;
+
+    if (! PyArg_ParseTuple(args, "i", &i))
+        return NULL;
+
+    return Py_BuildValue("s", self->flp->sampleFileName(i).c_str());
+}
+
 static PyMethodDef Flp_methods[] = {
-    {"demo",    (PyCFunction)Flp_demo,  METH_VARARGS},
     {"good",    (PyCFunction)Flp_good,  METH_VARARGS},
+    {"errorMessage",    (PyCFunction)Flp_errorMessage,  METH_VARARGS},
+    {"tempo",    (PyCFunction)Flp_tempo,  METH_VARARGS},
+    {"title",    (PyCFunction)Flp_title,  METH_VARARGS},
+    {"versionString",    (PyCFunction)Flp_versionString,  METH_VARARGS},
+    {"channelCount",    (PyCFunction)Flp_channelCount,  METH_VARARGS},
+    {"channelName",    (PyCFunction)Flp_channelName,  METH_VARARGS},
+    {"channelPluginName",    (PyCFunction)Flp_channelPluginName,  METH_VARARGS},
+    {"effectCount",    (PyCFunction)Flp_effectCount,  METH_VARARGS},
+    {"effectPluginName",    (PyCFunction)Flp_effectPluginName,  METH_VARARGS},
+    {"sampleCount",    (PyCFunction)Flp_sampleCount,  METH_VARARGS},
+    {"sampleFileName",    (PyCFunction)Flp_sampleFileName,  METH_VARARGS},
     {NULL,      NULL} // sentinel
 };
 
