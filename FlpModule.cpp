@@ -7,6 +7,7 @@ static PyObject * ErrorObject;
 typedef struct {
     PyObject_HEAD
     PyObject * x_attr; // attributes dictionary
+    Flp * flp; // C++ object
 } FlpObject;
 
 extern "C" {
@@ -45,7 +46,15 @@ static FlpObject * newFlpObject(PyObject * arg)
     self = PyObject_NEW(FlpObject, &Flp_Type);
     if (self == NULL)
         return NULL;
+
+    const char * filename;
+
+    if (!PyArg_ParseTuple(arg, "s", &filename))
+        return NULL;
+    
     self->x_attr = NULL;
+    self->flp = new Flp(filename);
+
     return self;
 }
 
@@ -53,6 +62,7 @@ static FlpObject * newFlpObject(PyObject * arg)
 
 static void Flp_dealloc(FlpObject * self)
 {
+    delete self->flp;
     Py_XDECREF(self->x_attr);
     PyMem_DEL(self);
 }
@@ -65,8 +75,20 @@ static PyObject * Flp_demo(FlpObject * self, PyObject * args)
     return Py_None;
 }
 
+static PyObject * Flp_good(FlpObject * self, PyObject * args)
+{
+    if (! PyArg_ParseTuple(args, ""))
+        return NULL;
+
+    if (self->flp->good())
+        Py_RETURN_TRUE;
+    else
+        Py_RETURN_FALSE;
+}
+
 static PyMethodDef Flp_methods[] = {
-    {"demo",    (PyCFunction)Flp_demo,  1},
+    {"demo",    (PyCFunction)Flp_demo,  METH_VARARGS},
+    {"good",    (PyCFunction)Flp_good,  METH_VARARGS},
     {NULL,      NULL} // sentinel
 };
 
@@ -107,8 +129,6 @@ static PyObject * flp_new(PyObject * self, PyObject * args)
 {
     FlpObject *rv;
     
-    if (!PyArg_ParseTuple(args, ""))
-        return NULL;
     rv = newFlpObject(args);
     if ( rv == NULL )
         return NULL;
@@ -118,7 +138,7 @@ static PyObject * flp_new(PyObject * self, PyObject * args)
 /* List of functions defined in the module */
 
 static PyMethodDef flp_methods[] = {
-    {"new",     flp_new,     1},
+    {"new",     flp_new,     METH_VARARGS},
     {NULL,      NULL}       /* sentinel */
 };
 
