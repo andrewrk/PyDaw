@@ -64,7 +64,7 @@ static void Flp_dealloc(FlpObject * self)
 {
     delete self->flp;
     Py_XDECREF(self->x_attr);
-    PyMem_DEL(self);
+    PyObject_FREE(self);
 }
 
 static PyObject * Flp_demo(FlpObject * self, PyObject * args)
