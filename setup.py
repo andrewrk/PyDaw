@@ -4,8 +4,9 @@ flp = Extension(
     'flpmodule',
     sources = [
         'Flp.cpp',
+        'Utils.cpp',
         'FlpModule.cpp',
-    ]
+    ],
 )
 
 setup(
