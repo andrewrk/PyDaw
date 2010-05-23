@@ -215,3 +215,24 @@ FLP_ChanParams    	=FLP_Text+23; 	// block of various channel params (can grow)
 More details to come, if anyone is interested... If not, let's not spend too
 much time into this file :)
 
+----------------------------------------------------------------
+Fruity Wrapper
+There are two formats, the old and the new :)
+
+Both start with a version number (signed long).
+
+The old format (version <= 4):
+- optional "extra block" size (dword)
+- midi port (dword)
+- synth saved or not (dword)
+- plugin type (dword) - vst (0 or 1), dx (1 or 5), vst 3 (7 or 8)
+- plugin specific block size (dword)
+- plugin specific block:
+ (vst): name (1 byte length + data)
+ (dx): name (1 byte length + data) + guid (16 bytes)
+- ... (since you want the name, I'll leave this out)
+
+The new format (version > 4) is based on chunks. A chunk is defined by an ID (dword) and a size (int64). After that comes chunk specific data. You can skip chunks based on the size.
+
+The plugin name is stored in a chunk with ID = 54 (cidPluginName). I think you can just skip all other chunks.
+

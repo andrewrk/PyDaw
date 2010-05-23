@@ -41,6 +41,9 @@ public:
     std::string sampleFileName(int i) const { return m_sampleStrings[i]; }
 
 private:
+    typedef long long int int64;
+    typedef int int32;
+    typedef short int int16;
     static const int c_NumFLFxChannels;
 
     struct Rgb
@@ -512,16 +515,24 @@ private:
 
     // read an 8bit signed integer and move the read position
     int readByte();
+    int readByteMem(unsigned char ** cursor);
     // read a 16bit little endian signed integer and move the read position
     int read16LE();
+    int read16LEMem(unsigned char ** cursor);
     // read a 32bit little endian signed integer and move the read position
     int read32LE();
+    int read32LEMem(unsigned char ** cursor);
+    // read a 64bit little endian signed integer and move the read position
+    int64 read64LEMem(unsigned char ** cursor);
     // skip the read pointer forward 
     void skip(int bytes);
+    void skipMem(unsigned char ** cursor, int64 bytes);
     // create an integer out of 4 characters
     int makeId(char,char,char,char);
 
     static void dump_mem (const void * buffer, int n_bytes);
+    void tryFruityWrapper(FL_Plugin * plugin);
+    std::string fruityWrapper(unsigned char * buffer, int size);
 };
 
 #endif

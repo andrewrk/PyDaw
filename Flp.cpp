@@ -651,6 +651,11 @@ Flp::Flp(std::string filename) :
             break;
         }
     }
+    // for each fruity wrapper, extract the plugin name.
+    for (int i=0; i<m_project.channels.size(); ++i)
+        tryFruityWrapper(&m_project.channels[i]);
+    for (int i=0; i<m_project.effects.size(); ++i)
+        tryFruityWrapper(&m_project.effects[i]);
 
     // create list of sample dependencies
     m_sampleStrings.clear();
@@ -677,6 +682,48 @@ Flp::~Flp()
 
 }
 
+void Flp::tryFruityWrapper(FL_Plugin * plugin)
+{
+    if (plugin->generatorName.compare("fruity wrapper") != 0) 
+        return;
+    
+    unsigned char * cursor = (unsigned char *) plugin->pluginSettings;
+    plugin->generatorName = fruityWrapper(cursor, plugin->pluginSettingsLength);
+}    
+
+std::string Flp::fruityWrapper(unsigned char * buffer, int size)
+{
+    const int cidPluginName = 54;
+    unsigned char * cursor = buffer;
+    unsigned char * cursorEnd = cursor + size;
+    int version = read32LEMem(&cursor);
+    if (version <= 4) {
+        // "old format"
+        int extraBlockSize = read32LEMem(&cursor);
+        int midiPort = read32LEMem(&cursor);
+        int synthSaved = read32LEMem(&cursor);
+        int pluginType = read32LEMem(&cursor);
+        int pluginSpecificBlockSize = read32LEMem(&cursor);
+
+        int pluginNameLen = readByteMem(&cursor);
+        std::string pluginName((const char *)cursor, pluginNameLen);
+        return pluginName;
+    } else {
+        // "new format"
+        while (cursor < cursorEnd) {
+            int chunkId = read32LEMem(&cursor);
+            int64 chunkSize = read64LEMem(&cursor);
+            if (chunkId == cidPluginName) {
+                std::string pluginName((const char *)cursor,
+                    (size_t)chunkSize);
+                return pluginName;
+            }
+            skipMem(&cursor, chunkSize);
+        }
+    }
+    return "";
+}    
+
 int Flp::readByte()
 {
     unsigned char c;
@@ -684,10 +731,24 @@ int Flp::readByte()
     return static_cast<int>(c);
 }
 
+int Flp::readByteMem(unsigned char ** cursor)
+{
+    unsigned char c = (*cursor)[0];
+    *cursor += 1;
+    return static_cast<int>(c);
+}
+
 int Flp::read16LE()
 {
     int value = readByte();
     value |= readByte() << 8;
+    return value;
+}
+
+int Flp::read16LEMem(unsigned char ** cursor)
+{
+    int value = readByteMem(cursor);
+    value |= readByteMem(cursor) << 8;
     return value;
 }
 
@@ -700,6 +761,30 @@ int Flp::read32LE()
     return value;
 }
 
+int Flp::read32LEMem(unsigned char ** cursor)
+{
+    int value = readByteMem(cursor);
+    value |= readByteMem(cursor) << 8;
+    value |= readByteMem(cursor) << 16;
+    value |= readByteMem(cursor) << 24;
+    return value;
+}
+
+Flp::int64 Flp::read64LEMem(unsigned char ** cursor)
+{
+    int64 value = readByteMem(cursor);
+    value |= ((int64)readByteMem(cursor)) << 8;
+    value |= ((int64)readByteMem(cursor)) << 16;
+    value |= ((int64)readByteMem(cursor)) << 24;
+
+    value |= ((int64)readByteMem(cursor)) << 32;
+    value |= ((int64)readByteMem(cursor)) << 40;
+    value |= ((int64)readByteMem(cursor)) << 48;
+    value |= ((int64)readByteMem(cursor)) << 56;
+    return value;
+    
+}
+
 int Flp::makeId(char c1, char c2, char c3, char c4)
 {
     return c1 | (c2 << 8) | (c3 << 16) | (c4 << 24);
@@ -708,6 +793,11 @@ int Flp::makeId(char c1, char c2, char c3, char c4)
 void Flp::skip(int bytes)
 {
     m_file.seekg(bytes, std::ios::cur);
+}
+
+void Flp::skipMem(unsigned char ** cursor, int64 bytes)
+{
+    *cursor += bytes;
 }
 
 void Flp::dump_mem (const void * buffer, int n_bytes)
