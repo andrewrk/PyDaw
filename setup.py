@@ -4,9 +4,12 @@ from distutils.core import setup, Extension
 flp = Extension(
     'flpmodule',
     sources = [
-        'Flp.cpp',
-        'Utils.cpp',
-        'FlpModule.cpp',
+        'daw/Flp.cpp',
+        'daw/Utils.cpp',
+        'daw/FlpModule.cpp',
+    ],
+    include_dirs = [
+        'daw'
     ],
 )
 

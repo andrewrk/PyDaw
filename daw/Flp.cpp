@@ -652,9 +652,9 @@ Flp::Flp(std::string filename) :
         }
     }
     // for each fruity wrapper, extract the plugin name.
-    for (int i=0; i<m_project.channels.size(); ++i)
+    for (unsigned int i=0; i<m_project.channels.size(); ++i)
         tryFruityWrapper(&m_project.channels[i]);
-    for (int i=0; i<m_project.effects.size(); ++i)
+    for (unsigned int i=0; i<m_project.effects.size(); ++i)
         tryFruityWrapper(&m_project.effects[i]);
 
     // create list of sample dependencies
@@ -666,7 +666,7 @@ Flp::Flp(std::string filename) :
     // effects are the ones that aren't channels.
     m_channelPlugins.clear();
     m_effectStrings.clear();
-    for (int i=0; i<m_project.channels.size(); ++i)
+    for (unsigned int i=0; i<m_project.channels.size(); ++i)
         m_channelPlugins.insert(m_project.channels[i].generatorName);
     for (it=m_effectPlugins.begin(); it != m_effectPlugins.end(); ++it) {
         if (m_channelPlugins.count(*it) == 0)
