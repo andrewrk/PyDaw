@@ -2,7 +2,17 @@
 import flp
 
 def load(path):
-    for func in (load_flp,):
+    try:
+        guess = _extensionToLoadFunc[path[path.rfind("."):]]
+    except KeyError:
+        guess = None
+    if guess != None:
+        result = guess(path)
+        if result != None:
+            return result # guessed right
+    for func in (load_flp, load_lmms):
+        if func == guess:
+            continue # already tried this one
         result = func(path)
         if result != None:
             return result
@@ -24,7 +34,12 @@ def load_flp(path):
                 yield f.effectPluginName(i)
     return Wrapper()
 
+def load_lmms(path):
+    return None
 
+_extensionToLoadFunc = {
+    ".flp": load_flp,
+}
 
 
 
