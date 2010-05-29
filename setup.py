@@ -1,5 +1,6 @@
 from distutils.core import setup, Extension
 
+# http://docs.python.org/distutils/apiref.html#distutils.core.Extension
 flp = Extension(
     'flpmodule',
     sources = [
