@@ -1,29 +1,24 @@
 #!/usr/bin/env python
 
 import sys
-
 import daw
 
 def main(paths):
-    printPath = 1 < len(paths)
-    indentation = ""
-    if printPath:
-        indentation = "\t"
     for path in paths:
-        if printPath: print(path + ":")
         f = daw.load(path)
-        if f == None:
-            print(indentation + "ERROR")
-            continue
-        categories = (
-            ("plugins", f.plugins()), 
-            ("samples", f.samples()), 
-            ("effects", f.effects()),
+
+        print("Beats per minute: %i" % f.tempo())
+        print("Project title: %s" % f.title())
+
+        stuff = (
+            ("Generators", f.generators()),
+            ("Samples", f.samples()),
+            ("Effects", f.effects()),
         )
-        for (name, items) in categories:
-           print(indentation + name + ":")
-           for item in items:
-               print(indentation + "\t" + item)
+        for label, lst in stuff:
+            print("\n%s:\n---------" % label)
+            for item in lst:
+                print(item)
 
 
 if __name__ == "__main__":
