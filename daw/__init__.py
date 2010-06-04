@@ -1,6 +1,6 @@
 from .flstudio import FlStudio
 from .lmms import Lmms
-from .dummy import Dummy
+from .exceptions import LoadError
 
 __version__ = '0.2'
 
@@ -14,13 +14,12 @@ _class_dict = dict([(X.identifier, X) for X in _class_tuple])
 def dawFor(projectFile):
     """
     Picks the daw class that is best suited for opening projectFile.
-    """
+   """
 
     for item in _class_tuple:
         if item.isValid(projectFile):
             return item
 
-    from exceptions import LoadError
     raise LoadError("File not recognized with any studio.")
 
 def ids():
