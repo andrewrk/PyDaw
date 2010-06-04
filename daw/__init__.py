@@ -9,6 +9,8 @@ _class_tuple = (
     Lmms,
 )
 
+_class_dict = dict([(X.identifier, X) for X in _class_tuple])
+
 def dawFor(projectFile):
     """
     Picks the daw class that is best suited for opening projectFile.
@@ -21,8 +23,11 @@ def dawFor(projectFile):
     from exceptions import LoadError
     raise LoadError("File not recognized with any studio.")
 
-def dawIds():
+def ids():
     return [X.identifier for X in _class_tuple]
+
+def dawForId(identifier):
+    return _class_dict[identifier]
 
 def load(projectFile):
     DawClass = dawFor(projectFile)
