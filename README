@@ -51,7 +51,8 @@
     f = daw.load("some_project.flp")
 
     print("Beats per minute: %i" % f.tempo())
-    print("Project title: %s" % f.title())
+    if f.title() != None:
+        print("Project title: %s" % f.title())
 
     stuff = (
         ("Generators", f.generators()),
