@@ -8,7 +8,8 @@ def main(paths):
         f = daw.load(path)
 
         print("Beats per minute: %i" % f.tempo())
-        print("Project title: %s" % f.title())
+        if f.title():
+            print("Project title: %s" % f.title())
 
         stuff = (
             ("Generators", f.generators()),

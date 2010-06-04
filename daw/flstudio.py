@@ -1,5 +1,5 @@
-from exceptions import LoadError
-from dummy import Dummy
+from .exceptions import LoadError
+from .dummy import Dummy
 import flp
 
 class FlStudio(Dummy):

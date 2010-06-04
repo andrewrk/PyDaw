@@ -4,14 +4,16 @@ def dawFor(projectFile):
     """
     Picks the daw class that is best suited for opening projectFile.
     """
-    from flstudio import FlStudio
-    from dummy import Dummy
+    from .flstudio import FlStudio
+    from .lmms import Lmms
+    from .dummy import Dummy
 
-    _class_list = (
+    class_tuple = (
         FlStudio,
+        Lmms,
     )
 
-    for item in _class_list:
+    for item in class_tuple:
         if item.isValid(projectFile):
             return item
 

@@ -1,4 +1,4 @@
-from exceptions import LoadError
+from .exceptions import LoadError
 
 class Dummy():
     "the interface used for a daw object"
