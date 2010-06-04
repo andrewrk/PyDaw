@@ -1,54 +1,76 @@
 == About ==
-PyFlp is a python library to mess with FL Studio project files.
 
-Currently it is read only and only has useful functions for determining
-the dependencies of an .flp file, because that's all I need it for at 
-the moment.
+    PyDaw is a python library to mess with Digital Audio Workstation files.
 
-However the loading already knows a LOT more information about the project.
-In fact it knows pretty much everything about it and just needs some numbers
-to be cleaned up in order for the information to be useful. In other words,
-adding more functionality to this library would be pretty easy.
+    Currently supported:
+        * FL Studio
 
-In the future I hope to provide editing and saving support.
+    Planned support:
+        * LMMS
+        * Cakewalk
+        * MIDI
+
+    === FL Studio ==
+
+        Currently it is read only and only has useful functions for determining
+        the dependencies of an .flp file, because that's all I need it for at 
+        the moment.
+
+        However the loading already knows a LOT more information about the
+        project. In fact it knows pretty much everything about it and just
+        needs some numbers to be cleaned up in order for the information
+        to be useful. In other words, adding more functionality to this
+        library is possible without more intimate knowledge of the file
+        format.
+
+        In the future I hope to provide editing and saving support.
+
+    === LMMS ===
+
+        LMMS is open source and uses an XML project file so should be a piece of
+        cake to add support for.
+
+    === MIDI ===
+
+        MIDI support should be not too hard with the use of a midi library.
+        Auto-rendering would be an interesting problem to solve.
+
+    === Cakewalk ===
+
+        I haven't done any research on this yet.
 
 == Installation ==
 
-python setup.py build
-sudo python setup.py install
+    python setup.py build
+    sudo python setup.py install
 
 == Example usage ==
 
-    import flp
+    import daw
 
-    f = flp.new("files/HeretoMove_20.flp")
+    f = daw.load("some_project.flp")
 
-    if f.good():
-        print("Good!")
+    print("Beats per minute: %i" % f.tempo())
+    print("Project title: %s" % f.title())
 
-        print("Beats per minute: %i" % f.tempo())
-        print("Project title: %s" % f.title())
-        print("Project version: %s" % f.versionString())
-
-        print("\nChannels:\n---------")
-        for i in range(f.channelCount()):
-            print("%s (%s)" % (f.channelName(i), f.channelPluginName(i)))
-        
-        print("\nSamples:\n----------")
-        for i in range(f.sampleCount()):
-            print(f.sampleFileName(i))
-
-        print("\nEffects:\n----------")
-        for i in range(f.effectCount()):
-            print(f.effectPluginName(i))
-    else:
-        print("Error: %s" % f.errorMessage())
+    stuff = (
+        ("Generators", f.generators()),
+        ("Samples", f.samples()),
+        ("Effects", f.effects()),
+    )
+    for label, lst in stuff:
+        print("\n%s:\n---------" % label)
+        for item in lst:
+            print(item)
 
 == Author ==
-Written by Andrew Kelley <superjoe30@gmail.com>.
 
-Code based on LMMS <http://lmms.sourceforge.net/> FLP import filter, written
-by Tobias Doerffel.
+    Written by Andrew Kelley <superjoe30@gmail.com>.
+
+    FL Studio code based on LMMS <http://lmms.sourceforge.net/> FLP import
+    filter, written by Tobias Doerffel.
 
 == Copyright ==
-GPL, I think.
+
+    GPL, I think.
+

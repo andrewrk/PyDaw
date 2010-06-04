@@ -14,12 +14,13 @@ flp = Extension(
 )
 
 setup(
-    name='flp',
-    version='0.1',
+    name='daw',
+    version=__import__('daw').__version__,
     author="Andrew Kelley",
     author_email="superjoe30@gmail.com",
-    url="http://github.com/superjoe30/PyFlp",
-    description='Mess with FL Studio project files',
+    url="http://github.com/superjoe30/PyDaw",
+    description='Mess with digital audio workstation project files',
     license="GPL",
     ext_modules=[flp],
+    packages=["daw"],
 )
