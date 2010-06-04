@@ -39,6 +39,8 @@ def load_lmms(path):
 
 _extensionToLoadFunc = {
     ".flp": load_flp,
+    ".mmp": load_lmms,
+    ".mmpz": load_lmms,
 }
 
 
