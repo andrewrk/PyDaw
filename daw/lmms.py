@@ -92,15 +92,27 @@ class Lmms(Dummy):
                 children = child.getElementsByTagName('attribute')
                 for node in children:
                     if node.getAttribute('name') == u'plugin':
-                        name = node.getAttribute('value')
+                        name = u'ladspaeffect-' + node.getAttribute('value')
                         break
             return name
         doms = self.doc.getElementsByTagName('effect')
         return list(set([effectName(dom) for dom in doms]))
 
     def generators(self):
+        def generatorName(dom):
+            name = dom.getAttribute('name')
+            if name == u'vestige':
+                children = dom.getElementsByTagName('vestige')
+                assert len(children) == 1
+                child = children[0]
+                fullPath = child.getAttribute('plugin')
+                # get only file title
+                title = fullPath.split('/')[-1]
+                # strip extension
+                name = title.split('.')[0]
+            return name
         doms = self.doc.getElementsByTagName('instrument')
-        return list(set([dom.getAttribute('name') for dom in doms]))
+        return list(set([generatorName(dom) for dom in doms]))
 
     def tempo(self):
         doms = self.doc.getElementsByTagName('head')
