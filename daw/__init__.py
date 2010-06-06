@@ -2,7 +2,7 @@ from .flstudio import FlStudio
 from .lmms import Lmms
 from .exceptions import LoadError
 
-__version__ = '0.3.1'
+__version__ = '0.3.2'
 
 _class_tuple = (
     FlStudio,
