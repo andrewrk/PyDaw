@@ -8,7 +8,7 @@ def _uncompress(data):
     return zlib.decompress(data[4:])
 
 def _compress(data):
-    return zlib.compress(struct.pack(">i", len(data)) + data)
+    return struct.pack(">I", len(data)) + zlib.compress(data)
 
 def _getdoc(projectFile):
     f = open(projectFile, 'rb')
@@ -72,7 +72,7 @@ class Lmms(Dummy):
 
     def save(self, outProject):
         f = open(outProject, 'w')
-        f.write(_compress(self.doc.toxml()))
+        f.write(_compress(self.doc.toxml(encoding='utf-8')))
         f.close()
 
     def extension(self):
