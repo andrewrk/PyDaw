@@ -724,11 +724,16 @@ std::string Flp::fruityWrapper(unsigned char * buffer, int size)
     return "";
 }    
 
-int Flp::readByte()
+int Flp::readByte(std::fstream & in)
 {
     unsigned char c;
-    m_file.read((char*)&c, 1);
+    in.read((char*)&c, 1);
     return static_cast<int>(c);
+}
+
+int Flp::readByte()
+{
+    return readByte(m_file);
 }
 
 int Flp::readByteMem(unsigned char ** cursor)
@@ -738,11 +743,16 @@ int Flp::readByteMem(unsigned char ** cursor)
     return static_cast<int>(c);
 }
 
+int Flp::read16LE(std::fstream & in)
+{
+    int value = readByte(in);
+    value |= readByte(in) << 8;
+    return value;
+}
+
 int Flp::read16LE()
 {
-    int value = readByte();
-    value |= readByte() << 8;
-    return value;
+    return read16LE(m_file);
 }
 
 int Flp::read16LEMem(unsigned char ** cursor)
@@ -752,13 +762,18 @@ int Flp::read16LEMem(unsigned char ** cursor)
     return value;
 }
 
+int Flp::read32LE(std::fstream & in)
+{
+    int value = readByte(in);
+    value |= readByte(in) << 8;
+    value |= readByte(in) << 16;
+    value |= readByte(in) << 24;
+    return value;
+}
+
 int Flp::read32LE()
 {
-    int value = readByte();
-    value |= readByte() << 8;
-    value |= readByte() << 16;
-    value |= readByte() << 24;
-    return value;
+    return read32LE(m_file);
 }
 
 int Flp::read32LEMem(unsigned char ** cursor)
@@ -810,3 +825,29 @@ void Flp::dump_mem (const void * buffer, int n_bytes)
     std::cout << "\n\n";
 }
 
+bool Flp::isValid(std::string filename)
+{
+    std::fstream in(filename.c_str(),std::fstream::in|std::fstream::binary);
+
+    if (! in.good())
+        return false;
+
+    // check for the magic "FLhd" at the beginning
+    int realMagic = makeId('F', 'L', 'h', 'd');
+    int magic = read32LE(in);
+
+    if (realMagic != magic)
+        return false;
+
+    // header should be 6 bytes long
+    const int header_len = read32LE(in);
+    if (header_len != 6)
+        return false;
+
+    // some type thing
+    const int type = read16LE(in);
+    if (type != 0) 
+        return false;
+
+    return true;
+}

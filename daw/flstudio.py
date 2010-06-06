@@ -1,6 +1,7 @@
 from .exceptions import LoadError
 from .dummy import Dummy
 import flp
+import shutil
 
 class FlStudio(Dummy):
     "FL Studio project"
@@ -14,8 +15,7 @@ class FlStudio(Dummy):
     @staticmethod
     def isValid(projectFile):
         "returns whether the project is of this daw"
-        f = flp.new(projectFile)
-        return f.good()
+        return flp.isValid(projectFile)
 
     def load(self, inProject):
         """
@@ -23,7 +23,10 @@ class FlStudio(Dummy):
         raises a LoadError if there is a problem.
         """
         self.filename = inProject
-        self.flp = flp.new(inProject)
+        try:
+            self.flp = flp.new(inProject)
+        except:
+            raise LoadError("Error loading the project")
         if not self.flp.good():
             raise LoadError(self.flp.errorMessage())
 

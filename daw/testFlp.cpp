@@ -9,6 +9,13 @@ int main(int argc, char * argv[])
         std::cout << "Usage: " << argv[0] << " <file.flp>" << std::endl;
         std::exit(1);
     }
+
+    if (Flp::isValid(argv[1])) {
+        std::cout << "file looks valid" << std::endl;
+    } else {
+        std::cout << "invalid file." << std::endl;
+    }
+
     Flp flp(argv[1]);
 
     if (flp.good()) {

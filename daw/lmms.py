@@ -41,7 +41,11 @@ class Lmms(Dummy):
 
     @staticmethod
     def isValid(inProject):
-        doc = _getdoc(inProject)
+        try:
+            doc = _getdoc(inProject)
+        except:
+            return False
+
         if doc is None:
             return False
 

@@ -14,6 +14,9 @@ public:
     Flp(std::string filename);
     ~Flp();
 
+    // returns whether a file is an FL Studio project.
+    static bool isValid(std::string filename);
+
     // true if loaded ok
     bool good() const { return m_good; }
     // if not good, this tells why
@@ -515,12 +518,15 @@ private:
 
     // read an 8bit signed integer and move the read position
     int readByte();
+    static int readByte(std::fstream &);
     int readByteMem(unsigned char ** cursor);
     // read a 16bit little endian signed integer and move the read position
     int read16LE();
+    static int read16LE(std::fstream &);
     int read16LEMem(unsigned char ** cursor);
     // read a 32bit little endian signed integer and move the read position
     int read32LE();
+    static int read32LE(std::fstream &);
     int read32LEMem(unsigned char ** cursor);
     // read a 64bit little endian signed integer and move the read position
     int64 read64LEMem(unsigned char ** cursor);
@@ -528,7 +534,7 @@ private:
     void skip(int bytes);
     void skipMem(unsigned char ** cursor, int64 bytes);
     // create an integer out of 4 characters
-    int makeId(char,char,char,char);
+    static int makeId(char,char,char,char);
 
     static void dump_mem (const void * buffer, int n_bytes);
     void tryFruityWrapper(FL_Plugin * plugin);

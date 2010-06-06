@@ -60,6 +60,7 @@ static FlpObject * newFlpObject(PyObject * arg)
     return self;
 }
 
+
 // Flp methods
 
 static void Flp_dealloc(FlpObject * self)
@@ -235,10 +236,25 @@ static PyObject * flp_new(PyObject * self, PyObject * args)
     return (PyObject *)rv;
 }
 
+static PyObject * flp_isValid(PyObject * self, PyObject * args)
+{
+    char * filename;
+
+    if (! PyArg_ParseTuple(args, "s", &filename))
+        return NULL;
+    bool valid = Flp::isValid(filename);
+    if (valid)
+        Py_RETURN_TRUE;
+    else
+        Py_RETURN_FALSE;
+}
+
+
 /* List of functions defined in the module */
 
 static PyMethodDef flp_methods[] = {
     {"new",     flp_new,     METH_VARARGS},
+    {"isValid",     flp_isValid,     METH_VARARGS},
     {NULL,      NULL}       /* sentinel */
 };
 
