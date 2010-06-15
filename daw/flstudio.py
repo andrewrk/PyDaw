@@ -9,7 +9,7 @@ class FlStudio(Dummy):
     canReadFile = True
     canMerge = False
     canRender = False
-    fileExtensions = ('flp')
+    fileExtensions = ('flp',)
     identifier = "flstudio"
 
     @staticmethod
