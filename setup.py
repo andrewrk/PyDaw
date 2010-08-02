@@ -15,7 +15,7 @@ flp = Extension(
 
 setup(
     name='daw',
-    version=__import__('daw').__version__,
+    version='0.3.4',
     author="Andrew Kelley",
     author_email="superjoe30@gmail.com",
     url="http://github.com/superjoe30/PyDaw",
