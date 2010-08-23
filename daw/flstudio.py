@@ -9,8 +9,18 @@ class FlStudio(Dummy):
     canReadFile = True
     canMerge = False
     canRender = False
-    fileExtensions = ('flp',)
-    identifier = "flstudio"
+    fileExtensions = (u'flp',)
+    identifier = u"flstudio"
+
+    def _yield_list(self, count, getter):
+        for i in xrange(count):
+            try:
+                name = getter(i).decode()
+            except UnicodeDecodeError:
+                continue
+            if len(name) == 0:
+                continue
+            yield name
 
     @staticmethod
     def isValid(projectFile):
@@ -26,9 +36,9 @@ class FlStudio(Dummy):
         try:
             self.flp = flp.new(inProject)
         except:
-            raise LoadError("Error loading the project")
+            raise LoadError(u"Error loading the project")
         if not self.flp.good():
-            raise LoadError(self.flp.errorMessage())
+            raise LoadError(self.flp.errorMessage().decode())
 
     def save(self, outProject):
         """
@@ -39,7 +49,7 @@ class FlStudio(Dummy):
         shutil.copy(self.filename, outProject)
 
     def extension(self):
-        return 'flp'
+        return u'flp'
 
     def samples(self):
         def formatFileName(windowsPath):
@@ -48,18 +58,22 @@ class FlStudio(Dummy):
                 windowsPath = windowsPath[2:]
             return windowsPath.replace("\\", "/")
 
-        return [formatFileName(self.flp.sampleFileName(i)) for i in xrange(self.flp.sampleCount())]
+        return self._yield_list(self.flp.sampleCount(), \
+            lambda index: formatFileName(self.flp.sampleFileName(index)))
 
     def effects(self):
         "return a list of effects required by this project"
-        return [self.flp.effectPluginName(i) for i in xrange(self.flp.effectCount())]
+        return self._yield_list(self.flp.effectCount(), self.flp.effectPluginName)
 
     def generators(self):
         "return a list of generators required by this project"
-        return [self.flp.channelPluginName(i) for i in xrange(self.flp.channelCount())]
+        return self._yield_list(self.flp.channelCount(), self.flp.channelPluginName)
 
     def tempo(self):
         return self.flp.tempo()
 
     def title(self):
-        return self.flp.title()
+        try:
+            return self.flp.title().decode()
+        except UnicodeDecodeError:
+            return u''

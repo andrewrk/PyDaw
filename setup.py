@@ -15,7 +15,7 @@ flp = Extension(
 
 setup(
     name='daw',
-    version='0.3.4',
+    version='0.3.5', # also update in daw/__init__.py
     author="Andrew Kelley",
     author_email="superjoe30@gmail.com",
     url="http://github.com/superjoe30/PyDaw",
