@@ -192,10 +192,10 @@ Flp::Flp(std::string filename) :
                 std::cerr << "channel type: " << data << std::endl;
             if (cc) {
                 switch (data) {
-                    case 0: cc->generatorName = "sampler"; break;
-                    case 1: cc->generatorName = "ts 404"; break;
-                    case 2: cc->generatorName = "3x osc"; break;
-                    case 3: cc->generatorName = "layer"; break;
+                    case 0: cc->generatorName = "Sampler"; break;
+                    case 1: cc->generatorName = "TS 404"; break;
+                    case 2: cc->generatorName = "3x Osc"; break;
+                    case 3: cc->generatorName = "Layer"; break;
                     default: break;
                 }
             }
@@ -302,7 +302,7 @@ Flp::Flp(std::string filename) :
 
         case FLP_LayerChans:
             m_project.channels[data].layerParent = cur_channel;
-            cc->generatorName = "layer";
+            cc->generatorName = "Layer";
 
             // DWORD EVENTS
         case FLP_Color:
@@ -392,7 +392,7 @@ Flp::Flp(std::string filename) :
 
         case FLP_Text_SampleFileName:
             cc->sampleFileName = text;
-            cc->generatorName = "sampler";
+            cc->generatorName = "Sampler";
             m_sampleSet.insert(cc->sampleFileName);
             break;
 
@@ -414,7 +414,7 @@ Flp::Flp(std::string filename) :
 
         case FLP_Text_PluginName:
             {
-                std::string pluginName = Utils::toLower(text);
+                std::string pluginName = text;
                 // we add all plugins to effects list and then
                 // remove the ones that aren't effects later.
                 m_effectPlugins.insert(pluginName);
@@ -445,7 +445,7 @@ Flp::Flp(std::string filename) :
                 cc->pluginSettings = new char[text_len];
                 std::memcpy( cc->pluginSettings, text, text_len );
                 cc->pluginSettingsLength = text_len;
-                cc->generatorName = "ts 404";
+                cc->generatorName = "TS 404";
             }
             break;
 
