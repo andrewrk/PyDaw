@@ -684,7 +684,7 @@ Flp::~Flp()
 
 void Flp::tryFruityWrapper(FL_Plugin * plugin)
 {
-    if (plugin->generatorName.compare("fruity wrapper") != 0) 
+    if (Utils::toLower(plugin->generatorName).compare("fruity wrapper") != 0) 
         return;
     
     unsigned char * cursor = (unsigned char *) plugin->pluginSettings;
