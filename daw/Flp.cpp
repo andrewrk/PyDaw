@@ -820,9 +820,9 @@ void Flp::dump_mem (const void * buffer, int n_bytes)
     unsigned char * cp = (unsigned char *) buffer;
     for (int k = 0; k < n_bytes; ++k) {
         //std::printf("%02x ", (unsigned int)cp[k]);
-        std::cout << cp[k];
+        std::cerr << cp[k];
     }
-    std::cout << "\n\n";
+    std::cerr << "\n\n";
 }
 
 bool Flp::isValid(std::string filename)
